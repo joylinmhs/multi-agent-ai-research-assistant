@@ -77,6 +77,6 @@ logs/
 *.private
 .env.production
 
-# OS
+#OS
 .DS_Store
 Thumbs.db
