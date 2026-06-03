@@ -4,7 +4,7 @@ A production-style full-stack research assistant that combines multiple AI agent
 
 ## Project Overview
 
-This repository is designed as a resume-worthy capstone project with a clean architecture:
+The architecture is as follows:
 
 - **Frontend:** React + Tailwind CSS, modern chat UI, dark mode, document management, and agent activity visualization.
 - **Backend:** FastAPI, modular routes, async AI pipelines, file upload, embeddings, and vector search.
