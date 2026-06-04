@@ -59,7 +59,7 @@ class ResearchAgent:
         results = self.collection.query(
             query_texts=[query],
             n_results=n_results,
-            include=["documents", "metadatas", "ids", "distances"],
+            include=["documents", "metadatas", "distances"],
         )
 
         documents = results.get("documents", [[]])[0]

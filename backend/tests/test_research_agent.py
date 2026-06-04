@@ -13,14 +13,16 @@ class TestResearchAgent(unittest.IsolatedAsyncioTestCase):
     async def test_retrieve_with_chroma_index(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             agent = ResearchAgent(collection_name="test_research_agent", persist_directory=temp_dir)
-            agent.collection.add(
-                documents=["This is a Chroma retrieval test document."],
-                metadatas=[{"source": "unit-test"}],
-                ids=["test-doc-1"],
-            )
+            try:
+                agent.collection.add(
+                    documents=["This is a Chroma retrieval test document."],
+                    metadatas=[{"source": "unit-test"}],
+                    ids=["test-doc-1"],
+                )
 
-            res = await agent.retrieve("retrieval test")
-            agent.close()
+                res = await agent.retrieve("retrieval test")
+            finally:
+                agent.close()
 
             self.assertIsInstance(res, list)
             self.assertGreater(len(res), 0)
