@@ -38,6 +38,10 @@ class ResearchAgent:
             embedding_function=self.embedding_function,
         )
 
+    def close(self) -> None:
+        """Close the underlying Chroma client to release resources."""
+        self.client.close()
+
     async def retrieve(self, query: str, context: dict | None = None, n_results: int = 5) -> list[dict[str, Any]]:
         """Retrieve relevant document chunks for a query."""
         if not query or not query.strip():

@@ -18,9 +18,9 @@ class TestResearchAgent(unittest.IsolatedAsyncioTestCase):
                 metadatas=[{"source": "unit-test"}],
                 ids=["test-doc-1"],
             )
-            agent.client.persist()
 
             res = await agent.retrieve("retrieval test")
+            agent.close()
 
             self.assertIsInstance(res, list)
             self.assertGreater(len(res), 0)
