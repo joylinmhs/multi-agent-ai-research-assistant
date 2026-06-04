@@ -10,3 +10,13 @@ class DocumentUploadResponse(BaseModel):
     filename: str
     message: str
     document_id: str
+
+class DocumentIngestRequest(BaseModel):
+    content: str
+    title: str | None = None
+    document_id: str | None = None
+    metadata: dict[str, str] | None = None
+
+class DocumentIngestResponse(BaseModel):
+    document_id: str
+    message: str
