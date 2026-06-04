@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 import unittest
 
 # Ensure the backend package is importable when running tests from the repo root
@@ -9,12 +10,23 @@ from app.agents.research_agent import ResearchAgent
 
 
 class TestResearchAgent(unittest.IsolatedAsyncioTestCase):
-    async def test_retrieve_placeholder(self):
-        agent = ResearchAgent()
-        res = await agent.retrieve("test query")
-        self.assertIsInstance(res, list)
-        self.assertGreater(len(res), 0)
-        self.assertIn("text", res[0])
+    async def test_retrieve_with_chroma_index(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            agent = ResearchAgent(collection_name="test_research_agent", persist_directory=temp_dir)
+            agent.collection.add(
+                documents=["This is a Chroma retrieval test document."],
+                metadatas=[{"source": "unit-test"}],
+                ids=["test-doc-1"],
+            )
+            agent.client.persist()
+
+            res = await agent.retrieve("retrieval test")
+
+            self.assertIsInstance(res, list)
+            self.assertGreater(len(res), 0)
+            self.assertIn("text", res[0])
+            self.assertIn("Chroma retrieval test document", res[0]["text"])
+            self.assertEqual(res[0]["metadata"].get("source"), "unit-test")
 
     async def test_empty_query(self):
         agent = ResearchAgent()
