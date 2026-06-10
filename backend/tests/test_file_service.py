@@ -20,11 +20,8 @@ class TestFileService(unittest.IsolatedAsyncioTestCase):
             service = FileService()
             service.storage_dir = Path(temp_dir)
 
-            upload_file = UploadFile(
-                filename="test.txt",
-                file=io.BytesIO(b"Hello Chroma ingestion"),
-                content_type="text/plain",
-            )
+            upload_file = UploadFile(io.BytesIO(b"Hello Chroma ingestion"), filename="test.txt")
+            upload_file.content_type = "text/plain"
 
             with patch("app.services.file_service.DocumentService") as MockDocumentService:
                 mock_instance = MockDocumentService.return_value
