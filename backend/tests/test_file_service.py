@@ -6,8 +6,6 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from starlette.datastructures import UploadFile
-
 # Ensure the backend package is importable when running tests from the repo root
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -20,8 +18,21 @@ class TestFileService(unittest.IsolatedAsyncioTestCase):
             service = FileService()
             service.storage_dir = Path(temp_dir)
 
-            upload_file = UploadFile(io.BytesIO(b"Hello Chroma ingestion"), filename="test.txt")
-            upload_file.content_type = "text/plain"
+            class DummyUploadFile:
+                def __init__(self, filename: str, content_type: str, data: bytes):
+                    self.filename = filename
+                    self.content_type = content_type
+                    self._buffer = io.BytesIO(data)
+
+                async def read(self):
+                    self._buffer.seek(0)
+                    return self._buffer.read()
+
+            upload_file = DummyUploadFile(
+                filename="test.txt",
+                content_type="text/plain",
+                data=b"Hello Chroma ingestion",
+            )
 
             with patch("app.services.file_service.DocumentService") as MockDocumentService:
                 mock_instance = MockDocumentService.return_value
