@@ -10,6 +10,7 @@ class DocumentUploadResponse(BaseModel):
     filename: str
     message: str
     document_id: str
+    ingested: bool = False
 
 class DocumentIngestRequest(BaseModel):
     content: str
