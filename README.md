@@ -1,6 +1,6 @@
 # Multi-Agent AI Research Assistant using RAG and LLM Agents
 
-A production-style full-stack research assistant that combines multiple AI agents with RAG, embeddings, and modern UI.
+A full-stack research assistant that combines multiple AI agents with RAG and embeddings.
 
 ## Project Overview
 
