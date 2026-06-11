@@ -254,7 +254,6 @@ function App() {
           ) : null}
         </section>
       </div>
-      </div>
     </Layout>
   );
 }
