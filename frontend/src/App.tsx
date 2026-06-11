@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import Layout from './components/Layout';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api/v1';
 
@@ -131,7 +132,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-8">
+    <Layout>
       <div className="mx-auto max-w-6xl space-y-10">
         <header className="rounded-3xl border border-slate-800 bg-slate-900/80 p-8 shadow-panel">
           <h1 className="text-4xl font-semibold text-white">Multi-Agent AI Research Assistant</h1>
@@ -253,7 +254,8 @@ function App() {
           ) : null}
         </section>
       </div>
-    </div>
+      </div>
+    </Layout>
   );
 }
 
