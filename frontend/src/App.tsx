@@ -147,65 +147,87 @@ function App() {
           <p className="mt-3 text-slate-400">Upload documents, ingest text, then ask questions against your Chroma-backed knowledge base.</p>
         </header>
 
-        <section className="grid gap-8 lg:grid-cols-2">
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
-            <h2 className="text-2xl font-semibold">Upload &amp; Ingest</h2>
-            <p className="mt-2 text-slate-400">Upload a text or PDF file and ingest its content into the Chroma retriever.</p>
-
-            <form className="mt-6 space-y-4" onSubmit={handleUploadSubmit}>
-              <label className="block text-sm font-medium text-slate-200">Select a file</label>
-              <input
-                type="file"
-                accept="text/plain,application/pdf"
-                onChange={handleFileChange}
-                className="block w-full rounded-2xl border border-slate-700 bg-slate-950 p-3 text-slate-100"
-              />
+        <section className="space-y-6">
+          <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
+            <h2 className="text-2xl font-semibold">Choose ingestion mode</h2>
+            <div className="mt-4 flex flex-col gap-4 sm:flex-row">
               <button
-                type="submit"
-                className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={loading || !uploadFile}
+                type="button"
+                onClick={() => setMode('upload')}
+                className={`w-full rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === 'upload' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-950 text-slate-200 hover:bg-slate-800'}`}
               >
                 Upload &amp; Ingest
               </button>
-            </form>
-
-            {uploadStatus ? (
-              <div className="mt-5 rounded-2xl border border-slate-700 bg-slate-950/90 p-4 text-sm text-slate-200">
-                <p className="font-medium">{uploadStatus.message}</p>
-                <p className="mt-2 text-slate-500">File: {uploadStatus.filename}</p>
-                <p className="text-slate-500">Ingested: {uploadStatus.ingested ? 'Yes' : 'No'}</p>
-              </div>
-            ) : null}
-          </article>
-
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
-            <h2 className="text-2xl font-semibold">Direct Text Ingestion</h2>
-            <p className="mt-2 text-slate-400">Paste text here and ingest it directly into the retriever.</p>
-
-            <form className="mt-6 space-y-4" onSubmit={handleIngestSubmit}>
-              <textarea
-                value={ingestText}
-                onChange={(event) => setIngestText(event.target.value)}
-                rows={6}
-                className="w-full rounded-3xl border border-slate-700 bg-slate-950 p-4 text-slate-100 outline-none focus:border-cyan-400"
-                placeholder="Paste text to ingest into the knowledge base..."
-              />
               <button
-                type="submit"
-                className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={loading}
+                type="button"
+                onClick={() => setMode('direct')}
+                className={`w-full rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === 'direct' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-950 text-slate-200 hover:bg-slate-800'}`}
               >
-                Ingest Text
+                Direct Text Ingestion
               </button>
-            </form>
+            </div>
+          </div>
 
-            {ingestStatus ? (
-              <div className="mt-5 rounded-2xl border border-slate-700 bg-slate-950/90 p-4 text-sm text-slate-200">
-                <p className="font-medium">{ingestStatus.message}</p>
-                {ingestStatus.document_id ? <p className="mt-2 text-slate-500">ID: {ingestStatus.document_id}</p> : null}
-              </div>
-            ) : null}
-          </article>
+          {mode === 'upload' ? (
+            <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
+              <h2 className="text-2xl font-semibold">Upload &amp; Ingest</h2>
+              <p className="mt-2 text-slate-400">Upload a text or PDF file and ingest its content into the Chroma retriever.</p>
+
+              <form className="mt-6 space-y-4" onSubmit={handleUploadSubmit}>
+                <label className="block text-sm font-medium text-slate-200">Select a file</label>
+                <input
+                  type="file"
+                  accept="text/plain,application/pdf"
+                  onChange={handleFileChange}
+                  className="block w-full rounded-2xl border border-slate-700 bg-slate-950 p-3 text-slate-100"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={loading || !uploadFile}
+                >
+                  Upload &amp; Ingest
+                </button>
+              </form>
+
+              {uploadStatus ? (
+                <div className="mt-5 rounded-2xl border border-slate-700 bg-slate-950/90 p-4 text-sm text-slate-200">
+                  <p className="font-medium">{uploadStatus.message}</p>
+                  <p className="mt-2 text-slate-500">File: {uploadStatus.filename}</p>
+                  <p className="text-slate-500">Ingested: {uploadStatus.ingested ? 'Yes' : 'No'}</p>
+                </div>
+              ) : null}
+            </article>
+          ) : (
+            <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
+              <h2 className="text-2xl font-semibold">Direct Text Ingestion</h2>
+              <p className="mt-2 text-slate-400">Paste text here and ingest it directly into the retriever.</p>
+
+              <form className="mt-6 space-y-4" onSubmit={handleIngestSubmit}>
+                <textarea
+                  value={ingestText}
+                  onChange={(event) => setIngestText(event.target.value)}
+                  rows={6}
+                  className="w-full rounded-3xl border border-slate-700 bg-slate-950 p-4 text-slate-100 outline-none focus:border-cyan-400"
+                  placeholder="Paste text to ingest into the knowledge base..."
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={loading}
+                >
+                  Ingest Text
+                </button>
+              </form>
+
+              {ingestStatus ? (
+                <div className="mt-5 rounded-2xl border border-slate-700 bg-slate-950/90 p-4 text-sm text-slate-200">
+                  <p className="font-medium">{ingestStatus.message}</p>
+                  {ingestStatus.document_id ? <p className="mt-2 text-slate-500">ID: {ingestStatus.document_id}</p> : null}
+                </div>
+              ) : null}
+            </article>
+          )}
         </section>
 
         <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
