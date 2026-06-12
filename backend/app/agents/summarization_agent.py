@@ -15,40 +15,30 @@ class SummarizationAgent:
         # Prefer chunks with smallest distance (most relevant)
         ranked = sorted(chunks, key=lambda c: (c.get("distance") is None, c.get("distance")))
 
-        # Take top 2 snippets and produce a short synthesized answer.
-        # Extract a short context window around query keywords when possible.
-        snippets: List[str] = []
-        query_terms = []
-        if query:
-            query_terms = [t.lower() for t in query.split() if len(t) > 2]
+        # Take the single most relevant chunk and produce a short answer.
+        top = ranked[0]
+        text = (top.get("text", "") or "").replace("\n", " ")
+        query_terms = [t.lower() for t in query.split() if len(t) > 2] if query else []
 
-        for c in ranked[:2]:
-            text = (c.get("text", "") or "").replace("\n", " ")
-            snippet = ""
-            if query_terms:
-                lower = text.lower()
-                idx = -1
-                for term in query_terms:
-                    idx = lower.find(term)
-                    if idx >= 0:
-                        break
+        snippet = ""
+        if query_terms:
+            lower = text.lower()
+            idx = -1
+            for term in query_terms:
+                idx = lower.find(term)
                 if idx >= 0:
-                    start = max(0, idx - 80)
-                    end = min(len(text), idx + 120)
-                    snippet = text[start:end].strip()
-                    if start > 0:
-                        snippet = "..." + snippet
-                    if end < len(text):
-                        snippet = snippet + "..."
-            if not snippet:
-                # fallback: short prefix
-                snippet = (text[:197].rsplit(" ", 1)[0] + "...") if len(text) > 200 else text
-            snippets.append(snippet.strip())
-        # Basic synthesis: mention query if available
-        if query:
-            header = f"Answer to: \"{query}\" — "
-        else:
-            header = "Answer: "
+                    break
+            if idx >= 0:
+                start = max(0, idx - 60)
+                end = min(len(text), idx + 90)
+                snippet = text[start:end].strip()
+                if start > 0:
+                    snippet = "..." + snippet
+                if end < len(text):
+                    snippet = snippet + "..."
 
-        synthesis = " \n\n ".join(snippets)
-        return f"{header}{synthesis}"
+        if not snippet:
+            snippet = (text[:150].rsplit(" ", 1)[0] + "...") if len(text) > 160 else text
+
+        header = f"Answer to: \"{query}\" — " if query else "Answer: "
+        return f"{header}{snippet.strip()}"
