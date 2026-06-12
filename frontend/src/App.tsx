@@ -39,7 +39,7 @@ function App() {
   const [ingestText, setIngestText] = useState('');
   const [ingestStatus, setIngestStatus] = useState<IngestResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'upload' | 'direct'>('upload');
+  const [mode, setMode] = useState<'upload' | 'direct' | null>(null);
 
   const handleQuerySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -198,7 +198,7 @@ function App() {
                 </div>
               ) : null}
             </article>
-          ) : (
+          ) : mode === 'direct' ? (
             <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
               <h2 className="text-2xl font-semibold">Direct Text Ingestion</h2>
               <p className="mt-2 text-slate-400">Paste text here and ingest it directly into the retriever.</p>
@@ -227,7 +227,7 @@ function App() {
                 </div>
               ) : null}
             </article>
-          )}
+          ) : null}
         </section>
 
         <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
