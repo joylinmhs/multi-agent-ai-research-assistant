@@ -16,7 +16,7 @@ class ChatService:
     async def handle_query(self, request: ChatRequest) -> ChatResponse:
         conversation_context = await self.memory_agent.load_context(request.session_id)
         retrieved_chunks = await self.research_agent.retrieve(request.query, conversation_context)
-        summary = await self.summarization_agent.summarize(retrieved_chunks)
+        summary = await self.summarization_agent.summarize(retrieved_chunks, request.query)
         fact_check = await self.fact_checking_agent.verify(summary, retrieved_chunks)
         sources = await self.citation_agent.generate_sources(retrieved_chunks)
         await self.memory_agent.save_context(request.session_id, request.query, summary)
