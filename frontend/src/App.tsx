@@ -150,22 +150,22 @@ function App() {
         <section className="space-y-6">
           <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
             <h2 className="text-2xl font-semibold">Choose ingestion mode</h2>
-            <div className="mt-4 flex flex-col gap-4 sm:flex-row">
-              <button
-                type="button"
-                onClick={() => setMode('upload')}
-                className={`w-full rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === 'upload' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-950 text-slate-200 hover:bg-slate-800'}`}
-              >
-                Upload &amp; Ingest
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode('direct')}
-                className={`w-full rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === 'direct' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-950 text-slate-200 hover:bg-slate-800'}`}
-              >
-                Direct Text Ingestion
-              </button>
-            </div>
+              <div className="mt-4 flex flex-col gap-4 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => setMode('upload')}
+                  className={`w-full rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === 'upload' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-950 text-slate-200 hover:bg-slate-800'}`}
+                >
+                  Upload &amp; Ingest
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('direct')}
+                  className={`w-full rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === 'direct' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-950 text-slate-200 hover:bg-slate-800'}`}
+                >
+                  Direct Text Ingestion
+                </button>
+              </div>
           </div>
 
           {mode === 'upload' ? (
