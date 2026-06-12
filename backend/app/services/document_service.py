@@ -36,11 +36,36 @@ class DocumentService:
             model_name=self.model_name,
         )
         try:
-            agent.collection.add(
-                documents=[content],
-                metadatas=[metadata],
-                ids=[document_id],
-            )
+            # Chunk the document into smaller passages to avoid returning whole documents
+            def _chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]:
+                if not text:
+                    return []
+                chunks: list[str] = []
+                start = 0
+                length = len(text)
+                while start < length:
+                    end = min(start + chunk_size, length)
+                    chunk = text[start:end]
+                    chunks.append(chunk)
+                    if end == length:
+                        break
+                    start = max(0, end - overlap)
+                return chunks
+
+            chunks = _chunk_text(content)
+            ids: list[str] = []
+            docs: list[str] = []
+            metas: list[dict[str, Any]] = []
+            for idx, chunk in enumerate(chunks):
+                cid = f"{document_id}-{idx}"
+                ids.append(cid)
+                docs.append(chunk)
+                m = dict(metadata or {})
+                m.update({"parent_document_id": document_id, "chunk_index": idx, "title": title})
+                metas.append(m)
+
+            if docs:
+                agent.collection.add(documents=docs, metadatas=metas, ids=ids)
         finally:
             agent.close()
 
