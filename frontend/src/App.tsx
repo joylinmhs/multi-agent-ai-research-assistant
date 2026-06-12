@@ -3,10 +3,17 @@ import Layout from './components/Layout';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api/v1';
 
+type SourceReference = {
+  document_id: string;
+  page_number: number | null;
+  snippet: string;
+  confidence: number;
+};
+
 type ChatResponse = {
   answer: string;
   summary: string;
-  sources: string[];
+  sources: SourceReference[];
   confidence: number;
   session_id: string;
 };
@@ -235,7 +242,11 @@ function App() {
                 <h3 className="text-lg font-semibold text-white">Sources</h3>
                 <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-300">
                   {chatResult.sources.map((source, index) => (
-                    <li key={index}>{source}</li>
+                    <li key={index}>
+                      <div className="font-medium text-slate-200">Document: {source.document_id}</div>
+                      <div className="text-slate-400">Snippet: {source.snippet}</div>
+                      <div className="text-slate-500">Confidence: {source.confidence.toFixed(2)}</div>
+                    </li>
                   ))}
                 </ul>
               </div>
