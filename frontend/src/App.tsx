@@ -230,63 +230,65 @@ function App() {
           ) : null}
         </section>
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
-          <h2 className="text-2xl font-semibold">Research Chat</h2>
-          <p className="mt-2 text-slate-400">Ask a question and retrieve answers from the ingested documents.</p>
+        {mode ? (
+          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-panel">
+            <h2 className="text-2xl font-semibold">Research Chat</h2>
+            <p className="mt-2 text-slate-400">Ask a question and retrieve answers from the ingested documents.</p>
 
-          <form className="mt-6 space-y-4" onSubmit={handleQuerySubmit}>
-            <textarea
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              rows={4}
-              className="w-full rounded-3xl border border-slate-700 bg-slate-950 p-4 text-slate-100 outline-none focus:border-cyan-400"
-              placeholder="Ask a question based on the ingested documents..."
-            />
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={loading}
-            >
-              Ask Research Agent
-            </button>
-          </form>
+            <form className="mt-6 space-y-4" onSubmit={handleQuerySubmit}>
+              <textarea
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                rows={4}
+                className="w-full rounded-3xl border border-slate-700 bg-slate-950 p-4 text-slate-100 outline-none focus:border-cyan-400"
+                placeholder="Ask a question based on the ingested documents..."
+              />
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={loading}
+              >
+                Ask Research Agent
+              </button>
+            </form>
 
-          {chatError ? (
-            <p className="mt-4 rounded-2xl border border-red-600 bg-red-950/80 p-4 text-sm text-red-200">{chatError}</p>
-          ) : null}
+            {chatError ? (
+              <p className="mt-4 rounded-2xl border border-red-600 bg-red-950/80 p-4 text-sm text-red-200">{chatError}</p>
+            ) : null}
 
-          {chatResult ? (
-            <article className="mt-6 space-y-4 rounded-3xl border border-slate-700 bg-slate-950/90 p-5">
-              <div>
-                <h3 className="text-lg font-semibold text-white">Answer</h3>
-                <p className="mt-2 text-slate-200">{chatResult.answer}</p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-white">Sources</h3>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-300">
-                  {chatResult.sources.map((source, index) => (
-                    <li key={index}>
-                      <div className="font-medium text-slate-200">Document: {source.document_id}</div>
-                      <div className="text-slate-400">Snippet: {source.snippet}</div>
-                      <div className="text-slate-500">Confidence: {source.confidence.toFixed(2)}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">
-                  <p className="font-semibold text-slate-200">Summary</p>
-                  <p className="mt-2">{chatResult.summary}</p>
+            {chatResult ? (
+              <article className="mt-6 space-y-4 rounded-3xl border border-slate-700 bg-slate-950/90 p-5">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Answer</h3>
+                  <p className="mt-2 text-slate-200">{chatResult.answer}</p>
                 </div>
-                <div className="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">
-                  <p className="font-semibold text-slate-200">Confidence</p>
-                  <p className="mt-2">{chatResult.confidence.toFixed(2)}</p>
-                  <p className="mt-1 text-slate-500">Session: {chatResult.session_id}</p>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Sources</h3>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-300">
+                    {chatResult.sources.map((source, index) => (
+                      <li key={index}>
+                        <div className="font-medium text-slate-200">Document: {source.document_id}</div>
+                        <div className="text-slate-400">Snippet: {source.snippet}</div>
+                        <div className="text-slate-500">Confidence: {source.confidence.toFixed(2)}</div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-            </article>
-          ) : null}
-        </section>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">
+                    <p className="font-semibold text-slate-200">Summary</p>
+                    <p className="mt-2">{chatResult.summary}</p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">
+                    <p className="font-semibold text-slate-200">Confidence</p>
+                    <p className="mt-2">{chatResult.confidence.toFixed(2)}</p>
+                    <p className="mt-1 text-slate-500">Session: {chatResult.session_id}</p>
+                  </div>
+                </div>
+              </article>
+            ) : null}
+          </section>
+        ) : null}
       </div>
     </Layout>
   );
