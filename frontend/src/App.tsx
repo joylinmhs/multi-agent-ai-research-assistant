@@ -39,6 +39,7 @@ function App() {
   const [ingestText, setIngestText] = useState('');
   const [ingestStatus, setIngestStatus] = useState<IngestResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<'upload' | 'direct'>('upload');
 
   const handleQuerySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
