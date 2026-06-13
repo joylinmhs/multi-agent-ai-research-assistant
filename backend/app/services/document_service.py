@@ -60,8 +60,11 @@ class DocumentService:
                 cid = f"{document_id}-{idx}"
                 ids.append(cid)
                 docs.append(chunk)
-                m = dict(metadata or {})
-                m.update({"parent_document_id": document_id, "chunk_index": idx, "title": title})
+                m: dict[str, Any] = {k: v for k, v in dict(metadata or {}).items() if v is not None}
+                m["parent_document_id"] = document_id
+                m["chunk_index"] = idx
+                if title is not None:
+                    m["title"] = title
                 metas.append(m)
 
             if docs:
