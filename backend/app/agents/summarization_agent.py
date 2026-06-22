@@ -1,44 +1,81 @@
+import re
+
 from typing import List, Optional
+
+
+STOP_WORDS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "did",
+    "do",
+    "does",
+    "for",
+    "how",
+    "in",
+    "is",
+    "of",
+    "on",
+    "the",
+    "to",
+    "was",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "who",
+    "why",
+}
 
 class SummarizationAgent:
     """Summarization Agent converts retrieved chunks into concise answers.
 
-    This is a simple local synthesizer: it selects the most relevant chunks
-    (by `distance`) and returns a short synthesized answer rather than
-    concatenating full documents. In future this should call an LLM.
+    This local implementation selects the sentences that best match the
+    question. It avoids returning raw chunks while keeping the app usable
+    without an external LLM.
     """
 
     async def summarize(self, chunks: List[dict], query: Optional[str] = None) -> str:
         if not chunks:
             return "I couldn't find relevant documents to answer that question."
 
-        # Prefer chunks with smallest distance (most relevant)
         ranked = sorted(chunks, key=lambda c: (c.get("distance") is None, c.get("distance")))
+        text = re.sub(r"\s+", " ", str(ranked[0].get("text", ""))).strip()
+        if not text:
+            return "I couldn't find relevant documents to answer that question."
 
-        # Take the single most relevant chunk and produce a short answer.
-        top = ranked[0]
-        text = (top.get("text", "") or "").replace("\n", " ")
-        query_terms = [t.lower() for t in query.split() if len(t) > 2] if query else []
+        sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+", text) if part.strip()]
+        if not sentences:
+            return text[:350].strip()
 
-        snippet = ""
-        if query_terms:
-            lower = text.lower()
-            idx = -1
-            for term in query_terms:
-                idx = lower.find(term)
-                if idx >= 0:
-                    break
-            if idx >= 0:
-                start = max(0, idx - 60)
-                end = min(len(text), idx + 90)
-                snippet = text[start:end].strip()
-                if start > 0:
-                    snippet = "..." + snippet
-                if end < len(text):
-                    snippet = snippet + "..."
+        query_terms = {
+            token
+            for token in re.findall(r"[a-z0-9]+", (query or "").lower())
+            if len(token) > 1 and token not in STOP_WORDS
+        }
+        best_index = max(
+            range(len(sentences)),
+            key=lambda index: self._sentence_score(sentences[index], query_terms),
+        )
 
-        if not snippet:
-            snippet = (text[:150].rsplit(" ", 1)[0] + "...") if len(text) > 160 else text
+        selected = [sentences[best_index]]
+        is_action_question = bool(re.search(r"\bwhat\s+(?:did|does|do)\b", (query or "").lower()))
+        if is_action_question and best_index + 1 < len(sentences):
+            following = sentences[best_index + 1]
+            if re.match(r"(?i)^(?:he|she|they|it|instead|then|after|before)\b", following):
+                selected.append(following)
 
-        header = f"Answer to: \"{query}\" - " if query else "Answer: "
-        return f"{header}{snippet.strip()}"
+        answer = " ".join(selected)
+        answer = re.sub(r"^.*?\bonce upon a time,?\s*", "", answer, flags=re.IGNORECASE)
+        answer = answer.strip()
+        if answer:
+            answer = answer[0].upper() + answer[1:]
+        return answer[:500]
+
+    @staticmethod
+    def _sentence_score(sentence: str, query_terms: set[str]) -> tuple[int, int]:
+        words = set(re.findall(r"[a-z0-9]+", sentence.lower()))
+        overlap = len(words & query_terms)
+        return overlap, -len(sentence)

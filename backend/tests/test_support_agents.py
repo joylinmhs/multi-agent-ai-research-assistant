@@ -2,6 +2,28 @@ import unittest
 
 from app.agents.fact_checking_agent import FactCheckingAgent
 from app.agents.memory_agent import MemoryAgent
+from app.agents.summarization_agent import SummarizationAgent
+
+
+class TestSummarizationAgent(unittest.IsolatedAsyncioTestCase):
+    async def test_answers_action_question_with_relevant_sentences(self):
+        story = (
+            "The Little Sparrow and the Seed Once upon a time, a little sparrow "
+            "found a tiny seed on the ground. Instead of eating it, she planted "
+            "it near a sunny spot and watered it every day. Days passed."
+        )
+
+        answer = await SummarizationAgent().summarize(
+            [{"text": story, "distance": 0.1}],
+            "What did the sparrow do?",
+        )
+
+        self.assertEqual(
+            answer,
+            "A little sparrow found a tiny seed on the ground. Instead of eating it, "
+            "she planted it near a sunny spot and watered it every day.",
+        )
+        self.assertNotIn("Answer to", answer)
 
 
 class TestFactCheckingAgent(unittest.IsolatedAsyncioTestCase):

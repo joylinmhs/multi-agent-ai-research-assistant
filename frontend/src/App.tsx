@@ -3,19 +3,8 @@ import Layout from './components/Layout';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api/v1';
 
-type SourceReference = {
-  document_id: string;
-  page_number: number | null;
-  snippet: string;
-  confidence: number;
-};
-
 type ChatResponse = {
   answer: string;
-  summary: string;
-  sources: SourceReference[];
-  confidence: number;
-  session_id: string;
 };
 
 type UploadResponse = {
@@ -257,34 +246,9 @@ function App() {
             ) : null}
 
             {chatResult ? (
-              <article className="mt-6 space-y-4 rounded-3xl border border-slate-700 bg-slate-950/90 p-5">
-                <div>
-                  <h3 className="text-lg font-semibold text-white">Answer</h3>
-                  <p className="mt-2 text-slate-200">{chatResult.answer}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white">Sources</h3>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-300">
-                    {chatResult.sources.map((source, index) => (
-                      <li key={index}>
-                        <div className="font-medium text-slate-200">Document: {source.document_id}</div>
-                        <div className="text-slate-400">Snippet: {source.snippet}</div>
-                        <div className="text-slate-500">Confidence: {source.confidence.toFixed(2)}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">
-                    <p className="font-semibold text-slate-200">Summary</p>
-                    <p className="mt-2">{chatResult.summary}</p>
-                  </div>
-                  <div className="rounded-2xl bg-slate-900 p-4 text-sm text-slate-400">
-                    <p className="font-semibold text-slate-200">Confidence</p>
-                    <p className="mt-2">{chatResult.confidence.toFixed(2)}</p>
-                    <p className="mt-1 text-slate-500">Session: {chatResult.session_id}</p>
-                  </div>
-                </div>
+              <article className="mt-6 rounded-3xl border border-slate-700 bg-slate-950/90 p-5">
+                <h3 className="text-lg font-semibold text-white">Answer</h3>
+                <p className="mt-3 leading-7 text-slate-200">{chatResult.answer}</p>
               </article>
             ) : null}
           </section>
