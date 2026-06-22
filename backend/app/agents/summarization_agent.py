@@ -40,5 +40,5 @@ class SummarizationAgent:
         if not snippet:
             snippet = (text[:150].rsplit(" ", 1)[0] + "...") if len(text) > 160 else text
 
-        header = f"Answer to: \"{query}\" — " if query else "Answer: "
+        header = f"Answer to: \"{query}\" - " if query else "Answer: "
         return f"{header}{snippet.strip()}"
