@@ -24,9 +24,9 @@ class TestFileService(unittest.IsolatedAsyncioTestCase):
                     self.content_type = content_type
                     self._buffer = io.BytesIO(data)
 
-                async def read(self):
+                async def read(self, size: int = -1):
                     self._buffer.seek(0)
-                    return self._buffer.read()
+                    return self._buffer.read(size)
 
             upload_file = DummyUploadFile(
                 filename="test.txt",
@@ -47,6 +47,42 @@ class TestFileService(unittest.IsolatedAsyncioTestCase):
                 self.assertTrue(response["ingested"])
                 self.assertEqual(response["message"], "File uploaded and ingested into Chroma successfully")
                 self.assertTrue((Path(temp_dir) / response["filename"]).exists())
+
+    async def test_save_document_sanitizes_filename(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            service = FileService()
+            service.storage_dir = Path(temp_dir)
+
+            class DummyUploadFile:
+                filename = "../unsafe.txt"
+                content_type = "text/plain"
+
+                async def read(self, size: int = -1):
+                    return b"safe content"
+
+            with patch("app.services.file_service.DocumentService"):
+                response = await service.save_document(DummyUploadFile())
+
+            self.assertNotIn("..", response["filename"])
+            self.assertEqual(Path(response["filename"]).parent, Path("."))
+            self.assertTrue((Path(temp_dir) / response["filename"]).exists())
+
+    async def test_save_document_rejects_oversized_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            service = FileService()
+            service.storage_dir = Path(temp_dir)
+
+            class DummyUploadFile:
+                filename = "large.txt"
+                content_type = "text/plain"
+
+                async def read(self, size: int = -1):
+                    return b"x" * size
+
+            with self.assertRaisesRegex(ValueError, "upload limit"):
+                await service.save_document(DummyUploadFile())
+
+            self.assertEqual(list(Path(temp_dir).iterdir()), [])
 
 
 if __name__ == "__main__":

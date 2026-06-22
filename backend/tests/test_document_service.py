@@ -8,12 +8,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from app.services.document_service import DocumentService
 from app.agents.research_agent import ResearchAgent
+from tests.fake_embedding import FakeEmbeddingFunction
 
 
 class TestDocumentService(unittest.IsolatedAsyncioTestCase):
     async def test_ingest_text_and_retrieve(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            ingest_service = DocumentService(persist_directory=temp_dir)
+            embedding_function = FakeEmbeddingFunction()
+            ingest_service = DocumentService(
+                persist_directory=temp_dir,
+                embedding_function=embedding_function,
+            )
             response = ingest_service.ingest_text(
                 content="This document should be searchable by Chroma.",
                 title="Test Document",
@@ -23,7 +28,10 @@ class TestDocumentService(unittest.IsolatedAsyncioTestCase):
             self.assertIn("document_id", response)
             self.assertEqual(response["message"], "Document ingested into Chroma successfully")
 
-            agent = ResearchAgent(persist_directory=temp_dir)
+            agent = ResearchAgent(
+                persist_directory=temp_dir,
+                embedding_function=embedding_function,
+            )
             try:
                 results = await agent.retrieve("searchable by Chroma")
             finally:

@@ -7,12 +7,17 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app.agents.research_agent import ResearchAgent
+from tests.fake_embedding import FakeEmbeddingFunction
 
 
 class TestResearchAgent(unittest.IsolatedAsyncioTestCase):
     async def test_retrieve_with_chroma_index(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            agent = ResearchAgent(collection_name="test_research_agent", persist_directory=temp_dir)
+            agent = ResearchAgent(
+                collection_name="test_research_agent",
+                persist_directory=temp_dir,
+                embedding_function=FakeEmbeddingFunction(),
+            )
             try:
                 agent.collection.add(
                     documents=["This is a Chroma retrieval test document."],
@@ -31,9 +36,16 @@ class TestResearchAgent(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(res[0]["metadata"].get("source"), "unit-test")
 
     async def test_empty_query(self):
-        agent = ResearchAgent()
-        res = await agent.retrieve("")
-        self.assertEqual(res, [])
+        with tempfile.TemporaryDirectory() as temp_dir:
+            agent = ResearchAgent(
+                persist_directory=temp_dir,
+                embedding_function=FakeEmbeddingFunction(),
+            )
+            try:
+                res = await agent.retrieve("")
+            finally:
+                agent.close()
+            self.assertEqual(res, [])
 
 
 if __name__ == "__main__":
