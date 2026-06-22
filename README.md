@@ -1,15 +1,16 @@
 # Multi-Agent AI Research Assistant using RAG and LLM Agents
 
-A full-stack research assistant that combines multiple AI agents with RAG and embeddings.
+A full-stack research assistant that combines a FastAPI API, Chroma retrieval,
+and focused agents with a React interface.
 
 ## Project Overview
 
 The architecture is as follows:
 
-- **Frontend:** React + Tailwind CSS, modern chat UI, dark mode, document management, and agent activity visualization.
-- **Backend:** FastAPI, modular routes, async AI pipelines, file upload, embeddings, and vector search.
-- **AI Stack:** LangChain + ChromaDB for RAG, with room for CrewAI / LangGraph and open-source LLM support later.
-- **Data:** PDF extraction, chunking, semantic retrieval, conversations, and citation tracking.
+- **Frontend:** React, TypeScript, Vite, and Tailwind CSS.
+- **Backend:** FastAPI routes for health checks, document ingestion, uploads, and chat queries.
+- **Retrieval:** ChromaDB with Sentence Transformers embeddings and chunk-level citations.
+- **Agents:** Retrieval, local summarization, evidence scoring, citations, and bounded in-process session memory.
 
 ## Folder Structure
 
@@ -19,15 +20,23 @@ The architecture is as follows:
 
 ## Initial Setup
 
-1. Install Python dependencies from `backend/requirements.txt`.
-2. Install frontend dependencies from `frontend/package.json`.
-3. Configure environment variables in `backend/.env`.
-4. Run backend with `uvicorn app.main:app --reload`.
-5. Run frontend with `npm run dev`.
+1. Create a Python virtual environment and install `backend/requirements.txt`.
+2. Copy `backend/.env.example` to `backend/.env` and adjust values as needed.
+3. From `backend/`, run `uvicorn app.main:app --reload`.
+4. From `frontend/`, run `npm install` and `npm run dev`.
 
-## Next Steps
+The first use of the default embedding model may download model files. Uploaded
+files are limited to 10 MB by default; configure `MAX_UPLOAD_SIZE_BYTES` to
+change that limit.
 
-- Add PDF upload and extraction.
-- Build RAG pipeline and vector store integration.
-- Implement multi-agent orchestration.
-- Create chat UI and history persistence.
+## Checks
+
+- Backend: `cd backend && python -m unittest discover -s tests -v`
+- Frontend: `cd frontend && npm run build`
+
+## Current Limitations
+
+- Answer synthesis is extractive and does not currently call an LLM.
+- Confidence is a lexical evidence score, not model-based fact verification.
+- Session memory is process-local and is lost when the backend restarts.
+- Uploaded PDFs without extractable text are stored but not ingested.

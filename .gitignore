@@ -69,7 +69,10 @@ storage/
 uploads/
 chromadb/
 logs/
-.log
+*.log
+tmp-*/
+tmp_*.txt
+upload_test*.py
 
 # Secrets & API Keys
 *.key

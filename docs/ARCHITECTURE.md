@@ -2,21 +2,21 @@
 
 ## Core Layers
 
-- **API Layer** (`backend/app/api`) — FastAPI routes and versioned endpoints.
-- **Agent Layer** (`backend/app/agents`) — Separate agent classes for research, summarization, fact-checking, citation, and memory.
-- **Service Layer** (`backend/app/services`) — Business logic for embeddings, file ingestion, and session management.
-- **RAG Layer** (`backend/app/rag`) — Retrieval augmented generation pipeline and vector store helpers.
-- **Database Layer** (`backend/app/db`) — Persistence for chat sessions, metadata, and user documents.
-- **Schema Layer** (`backend/app/schemas`) — Pydantic request/response models.
+- **API Layer** (`backend/app/api`) - FastAPI routes and versioned endpoints.
+- **Agent Layer** (`backend/app/agents`) - Retrieval, extractive summarization, evidence scoring, citations, and process-local memory.
+- **Service Layer** (`backend/app/services`) - File handling, text chunking, Chroma ingestion, and chat orchestration.
+- **Vector Store** - Persistent Chroma collections using Sentence Transformers embeddings.
+- **Database Layer** (`backend/app/db`) - SQLAlchemy scaffolding; it is not yet used by the request flow.
+- **Schema Layer** (`backend/app/schemas`) - Pydantic request and response models.
 
 ## Data Flow
 
-1. User uploads files via frontend.
-2. Backend extracts text and chunk metadata.
-3. Embeddings are generated and stored in Chroma.
-4. User sends query to chat endpoint.
-5. Research Agent retrieves relevant documents via semantic search.
-6. Summarization Agent drafts the answer.
-7. Fact-Checking Agent verifies claims and attaches confidence.
-8. Citation Agent returns sources and references.
-9. Memory Agent logs conversation context for later use.
+1. The user uploads a PDF or text file, or submits text directly.
+2. The backend extracts and chunks the text.
+3. Embeddings are stored in Chroma.
+4. The user sends a query to the chat endpoint.
+5. Research Agent retrieves relevant chunks with semantic search.
+6. Summarization Agent extracts a concise answer from the top result.
+7. Fact-Checking Agent calculates lexical overlap with retrieved evidence.
+8. Citation Agent attaches source snippets and confidence values.
+9. Memory Agent retains bounded conversation context for the life of the backend process.
