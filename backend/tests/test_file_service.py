@@ -54,7 +54,7 @@ class TestFileService(unittest.IsolatedAsyncioTestCase):
             service.storage_dir = Path(temp_dir)
 
             class DummyUploadFile:
-                filename = "../unsafe.txt"
+                filename = "../unsafe:file.txt"
                 content_type = "text/plain"
 
                 async def read(self, size: int = -1):
@@ -64,6 +64,7 @@ class TestFileService(unittest.IsolatedAsyncioTestCase):
                 response = await service.save_document(DummyUploadFile())
 
             self.assertNotIn("..", response["filename"])
+            self.assertNotIn(":", response["filename"])
             self.assertEqual(Path(response["filename"]).parent, Path("."))
             self.assertTrue((Path(temp_dir) / response["filename"]).exists())
 

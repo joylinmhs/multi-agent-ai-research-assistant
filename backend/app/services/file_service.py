@@ -1,3 +1,4 @@
+import re
 import uuid
 from pathlib import Path
 
@@ -14,7 +15,8 @@ class FileService:
         self.storage_dir.mkdir(parents=True, exist_ok=True)
 
     async def save_document(self, file: UploadFile) -> dict:
-        original_filename = Path(file.filename or "upload").name
+        basename = Path(file.filename or "upload").name
+        original_filename = re.sub(r"[^A-Za-z0-9._-]", "_", basename).strip(".") or "upload"
         filename = f"{uuid.uuid4()}_{original_filename}"
         destination = self.storage_dir / filename
 
