@@ -1,5 +1,6 @@
 import uuid
 from pathlib import Path
+
 from fastapi import UploadFile
 import pdfplumber
 
@@ -13,10 +14,16 @@ class FileService:
         self.storage_dir.mkdir(parents=True, exist_ok=True)
 
     async def save_document(self, file: UploadFile) -> dict:
-        filename = f"{uuid.uuid4()}_{file.filename}"
+        original_filename = Path(file.filename or "upload").name
+        filename = f"{uuid.uuid4()}_{original_filename}"
         destination = self.storage_dir / filename
 
-        contents = await file.read()
+        contents = await file.read(settings.MAX_UPLOAD_SIZE_BYTES + 1)
+        if len(contents) > settings.MAX_UPLOAD_SIZE_BYTES:
+            raise ValueError(
+                f"File exceeds the {settings.MAX_UPLOAD_SIZE_BYTES // (1024 * 1024)} MB upload limit"
+            )
+
         with destination.open("wb") as buffer:
             buffer.write(contents)
 
@@ -28,7 +35,7 @@ class FileService:
             DocumentService().ingest_text(
                 content=text,
                 document_id=document_id,
-                metadata={"filename": file.filename},
+                metadata={"filename": original_filename},
             )
             ingested = True
             message = "File uploaded and ingested into Chroma successfully"

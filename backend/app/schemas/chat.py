@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
 class ChatRequest(BaseModel):
@@ -15,6 +15,6 @@ class SourceReference(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     summary: str | None = None
-    sources: List[SourceReference] = []
+    sources: List[SourceReference] = Field(default_factory=list)
     confidence: float = 0.0
     session_id: str | None = None

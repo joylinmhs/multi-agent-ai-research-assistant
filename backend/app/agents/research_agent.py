@@ -20,6 +20,7 @@ class ResearchAgent:
         collection_name: str = "research",
         persist_directory: str | None = None,
         model_name: str = "all-MiniLM-L6-v2",
+        embedding_function: Any | None = None,
     ) -> None:
         self.collection_name = collection_name
         self.persist_directory = Path(persist_directory or settings.CHROMA_DB_DIR)
@@ -30,8 +31,8 @@ class ResearchAgent:
                 persist_directory=str(self.persist_directory),
             )
         )
-        self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name=model_name
+        self.embedding_function = embedding_function or (
+            embedding_functions.SentenceTransformerEmbeddingFunction(model_name=model_name)
         )
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,

@@ -10,10 +10,12 @@ class DocumentService:
         collection_name: str = "research",
         persist_directory: str | None = None,
         model_name: str = "all-MiniLM-L6-v2",
+        embedding_function: Any | None = None,
     ):
         self.collection_name = collection_name
         self.persist_directory = persist_directory
         self.model_name = model_name
+        self.embedding_function = embedding_function
 
     def ingest_text(
         self,
@@ -34,6 +36,7 @@ class DocumentService:
             collection_name=self.collection_name,
             persist_directory=self.persist_directory,
             model_name=self.model_name,
+            embedding_function=self.embedding_function,
         )
         try:
             # Chunk the document into smaller passages to avoid returning whole documents

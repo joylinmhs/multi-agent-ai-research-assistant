@@ -1,12 +1,6 @@
 from pathlib import Path
 
-# Support multiple pydantic versions: older releases expose `BaseSettings`
-# directly on `pydantic`, newer releases moved it to `pydantic-settings`.
-try:
-    from pydantic import BaseSettings, AnyUrl, PostgresDsn, validator
-except Exception:
-    from pydantic import AnyUrl, PostgresDsn, validator
-    from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,6 +12,7 @@ class Settings(BaseSettings):
     # a running Postgres instance when starting the app for tests or dev.
     DATABASE_URL: str = f"sqlite:///{BASE_DIR.parent / 'dev.db'}"
     CHROMA_DB_DIR: str = str(BASE_DIR / "storage" / "chromadb")
+    MAX_UPLOAD_SIZE_BYTES: int = 10 * 1024 * 1024
 
     OPENAI_API_KEY: str | None = None
     GEMINI_API_KEY: str | None = None

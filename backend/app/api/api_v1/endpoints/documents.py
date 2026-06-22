@@ -17,7 +17,10 @@ async def upload_document(file: UploadFile = File(...)):
     if file.content_type not in ["application/pdf", "text/plain"]:
         raise HTTPException(status_code=400, detail="Unsupported file format")
 
-    metadata = await file_service.save_document(file)
+    try:
+        metadata = await file_service.save_document(file)
+    except ValueError as exc:
+        raise HTTPException(status_code=413, detail=str(exc)) from exc
     return DocumentUploadResponse(**metadata)
 
 @router.post("/ingest", response_model=DocumentIngestResponse)
