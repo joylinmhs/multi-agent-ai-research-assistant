@@ -1,7 +1,6 @@
 # Multi-Agent AI Research Assistant using RAG and LLM Agents
 
-A full-stack research assistant that combines a FastAPI API, Chroma retrieval,
-and focused agents with a React interface.
+A full-stack research assistant that combines a FastAPI API, Chroma retrieval, and focused agents with a React interface.
 
 ## Project Overview
 
