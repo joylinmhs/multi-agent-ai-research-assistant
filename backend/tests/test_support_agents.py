@@ -10,7 +10,8 @@ class TestSummarizationAgent(unittest.IsolatedAsyncioTestCase):
         story = (
             "The Little Sparrow and the Seed Once upon a time, a little sparrow "
             "found a tiny seed on the ground. Instead of eating it, she planted "
-            "it near a sunny spot and watered it every day. Days passed."
+            "it near a sunny spot and watered it every day. Days passed. "
+            "The sparrow was very happy."
         )
 
         answer = await SummarizationAgent().summarize(

@@ -29,6 +29,33 @@ STOP_WORDS = {
     "why",
 }
 
+ACTION_WORDS = {
+    "asked",
+    "built",
+    "carried",
+    "created",
+    "discovered",
+    "found",
+    "gave",
+    "helped",
+    "made",
+    "moved",
+    "opened",
+    "picked",
+    "planted",
+    "ran",
+    "saved",
+    "shared",
+    "spoke",
+    "took",
+    "tried",
+    "walked",
+    "watered",
+    "went",
+    "worked",
+    "wrote",
+}
+
 class SummarizationAgent:
     """Summarization Agent converts retrieved chunks into concise answers.
 
@@ -55,13 +82,15 @@ class SummarizationAgent:
             for token in re.findall(r"[a-z0-9]+", (query or "").lower())
             if len(token) > 1 and token not in STOP_WORDS
         }
+        is_action_question = bool(re.search(r"\bwhat\s+(?:did|does|do)\b", (query or "").lower()))
         best_index = max(
             range(len(sentences)),
-            key=lambda index: self._sentence_score(sentences[index], query_terms),
+            key=lambda index: self._sentence_score(
+                sentences[index], query_terms, is_action_question, index
+            ),
         )
 
         selected = [sentences[best_index]]
-        is_action_question = bool(re.search(r"\bwhat\s+(?:did|does|do)\b", (query or "").lower()))
         if is_action_question and best_index + 1 < len(sentences):
             following = sentences[best_index + 1]
             if re.match(r"(?i)^(?:he|she|they|it|instead|then|after|before)\b", following):
@@ -75,7 +104,13 @@ class SummarizationAgent:
         return answer[:500]
 
     @staticmethod
-    def _sentence_score(sentence: str, query_terms: set[str]) -> tuple[int, int]:
+    def _sentence_score(
+        sentence: str,
+        query_terms: set[str],
+        is_action_question: bool,
+        index: int,
+    ) -> tuple[int, int, int]:
         words = set(re.findall(r"[a-z0-9]+", sentence.lower()))
         overlap = len(words & query_terms)
-        return overlap, -len(sentence)
+        action_score = len(words & ACTION_WORDS) if is_action_question else 0
+        return overlap, action_score, -index
