@@ -24,9 +24,6 @@ The architecture is as follows:
 3. From `backend/`, run `uvicorn app.main:app --reload`.
 4. From `frontend/`, run `npm install` and `npm run dev`.
 
-The first use of the default embedding model may download model files. Uploaded
-files are limited to 10 MB by default; configure `MAX_UPLOAD_SIZE_BYTES` to
-change that limit.
 
 ## Checks
 
