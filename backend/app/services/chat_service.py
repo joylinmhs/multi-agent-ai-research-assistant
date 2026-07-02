@@ -15,8 +15,22 @@ class ChatService:
 
     async def handle_query(self, request: ChatRequest) -> ChatResponse:
         conversation_context = await self.memory_agent.load_context(request.session_id)
-        retrieved_chunks = await self.research_agent.retrieve(request.query, conversation_context)
-        summary = await self.summarization_agent.summarize(retrieved_chunks, request.query)
+        retrieved_chunks = await self.research_agent.retrieve(
+            request.query,
+            conversation_context,
+            document_id=request.document_id,
+        )
+        previous_answer = request.previous_answer
+        if not previous_answer:
+            for message in reversed(conversation_context.get("history", [])):
+                if message.get("role") == "assistant":
+                    previous_answer = message.get("content")
+                    break
+        summary = await self.summarization_agent.summarize(
+            retrieved_chunks,
+            request.query,
+            previous_answer=previous_answer,
+        )
         fact_check = await self.fact_checking_agent.verify(summary, retrieved_chunks)
         sources = await self.citation_agent.generate_sources(retrieved_chunks)
         await self.memory_agent.save_context(request.session_id, request.query, summary)

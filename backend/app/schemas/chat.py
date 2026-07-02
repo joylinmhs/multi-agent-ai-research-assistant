@@ -5,6 +5,8 @@ class ChatRequest(BaseModel):
     query: str
     session_id: str | None = None
     user_id: str | None = None
+    document_id: str | None = None
+    previous_answer: str | None = None
 
 class SourceReference(BaseModel):
     document_id: str

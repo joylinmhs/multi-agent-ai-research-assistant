@@ -46,7 +46,13 @@ class ResearchAgent:
         """Close the underlying Chroma client to release resources."""
         self.client.close()
 
-    async def retrieve(self, query: str, context: dict | None = None, n_results: int = 5) -> list[dict[str, Any]]:
+    async def retrieve(
+        self,
+        query: str,
+        context: dict | None = None,
+        n_results: int = 5,
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]]:
         """Retrieve relevant document chunks for a query."""
         if not query or not query.strip():
             logger.warning("ResearchAgent.retrieve called with empty query")
@@ -57,13 +63,24 @@ class ResearchAgent:
             extra={"query": query, "context_keys": list(context.keys()) if context else []},
         )
 
-        return await asyncio.to_thread(self._query_collection, query, n_results)
+        return await asyncio.to_thread(self._query_collection, query, n_results, document_id)
 
-    def _query_collection(self, query: str, n_results: int) -> list[dict[str, Any]]:
+    def _query_collection(
+        self,
+        query: str,
+        n_results: int,
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        query_options: dict[str, Any] = {
+            "query_texts": [query],
+            "n_results": n_results,
+            "include": ["documents", "metadatas", "distances"],
+        }
+        if document_id:
+            query_options["where"] = {"parent_document_id": document_id}
+
         results = self.collection.query(
-            query_texts=[query],
-            n_results=n_results,
-            include=["documents", "metadatas", "distances"],
+            **query_options,
         )
 
         documents = results.get("documents", [[]])[0]
