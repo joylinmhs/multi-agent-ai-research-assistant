@@ -32,7 +32,10 @@ class ResearchAgent:
             )
         )
         self.embedding_function = embedding_function or (
-            embedding_functions.SentenceTransformerEmbeddingFunction(model_name=model_name)
+            embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name=model_name,
+                local_files_only=True,
+            )
         )
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
