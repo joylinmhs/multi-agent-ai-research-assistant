@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Multi-Agent AI Research Assistant"
+    FRONTEND_URL: str = "http://127.0.0.1:5173/"
 
     # Provide a sensible default for local development to avoid requiring
     # a running Postgres instance when starting the app for tests or dev.
