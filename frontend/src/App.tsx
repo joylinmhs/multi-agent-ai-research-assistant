@@ -29,6 +29,8 @@ function App() {
   const [ingestStatus, setIngestStatus] = useState<IngestResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'upload' | 'direct' | null>(null);
+  const [activeDocumentId, setActiveDocumentId] = useState<string | null>(null);
+  const [lastAnswer, setLastAnswer] = useState<string | null>(null);
 
   const handleQuerySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,13 +40,22 @@ function App() {
       setChatError('Please enter a question.');
       return;
     }
+    if (!activeDocumentId) {
+      setChatError('Upload or ingest a document before asking a question.');
+      return;
+    }
 
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE}/chat/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, session_id: 'frontend-session', context: {} }),
+        body: JSON.stringify({
+          query,
+          session_id: 'frontend-session',
+          document_id: activeDocumentId,
+          previous_answer: lastAnswer,
+        }),
       });
 
       if (!response.ok) {
@@ -53,6 +64,7 @@ function App() {
 
       const data = (await response.json()) as ChatResponse;
       setChatResult(data);
+      setLastAnswer(data.answer);
     } catch (error) {
       setChatError(error instanceof Error ? error.message : String(error));
     } finally {
@@ -89,6 +101,8 @@ function App() {
 
       const data = (await response.json()) as UploadResponse;
       setUploadStatus(data);
+      setActiveDocumentId(data.document_id);
+      setLastAnswer(null);
     } catch (error) {
       setUploadStatus({ filename: uploadFile.name, message: error instanceof Error ? error.message : String(error), document_id: '', ingested: false });
     } finally {
@@ -120,6 +134,8 @@ function App() {
 
       const data = (await response.json()) as IngestResponse;
       setIngestStatus(data);
+      setActiveDocumentId(data.document_id);
+      setLastAnswer(null);
       setIngestText('');
     } catch (error) {
       setIngestStatus({ document_id: '', message: error instanceof Error ? error.message : String(error) });

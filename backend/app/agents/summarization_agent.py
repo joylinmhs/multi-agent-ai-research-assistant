@@ -15,6 +15,8 @@ STOP_WORDS = {
     "how",
     "in",
     "is",
+    "it",
+    "next",
     "of",
     "on",
     "the",
@@ -64,7 +66,12 @@ class SummarizationAgent:
     without an external LLM.
     """
 
-    async def summarize(self, chunks: List[dict], query: Optional[str] = None) -> str:
+    async def summarize(
+        self,
+        chunks: List[dict],
+        query: Optional[str] = None,
+        previous_answer: Optional[str] = None,
+    ) -> str:
         if not chunks:
             return "I couldn't find relevant documents to answer that question."
 
@@ -76,6 +83,11 @@ class SummarizationAgent:
         sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+", text) if part.strip()]
         if not sentences:
             return text[:350].strip()
+
+        if previous_answer and re.search(r"\bnext\b", (query or "").lower()):
+            next_sentence = self._find_next_sentence(sentences, previous_answer)
+            if next_sentence:
+                return self._clean_answer(next_sentence)
 
         query_terms = {
             token
@@ -96,12 +108,43 @@ class SummarizationAgent:
             if re.match(r"(?i)^(?:he|she|they|it|instead|then|after|before)\b", following):
                 selected.append(following)
 
-        answer = " ".join(selected)
+        return self._clean_answer(" ".join(selected))[:500]
+
+    @staticmethod
+    def _clean_answer(answer: str) -> str:
         answer = re.sub(r"^.*?\bonce upon a time,?\s*", "", answer, flags=re.IGNORECASE)
         answer = answer.strip()
         if answer:
             answer = answer[0].upper() + answer[1:]
-        return answer[:500]
+        return answer
+
+    @classmethod
+    def _find_next_sentence(cls, sentences: list[str], previous_answer: str) -> str | None:
+        previous_sentences = [
+            part.strip()
+            for part in re.split(r"(?<=[.!?])\s+", previous_answer)
+            if part.strip()
+        ]
+        if not previous_sentences:
+            return None
+
+        previous_terms = {
+            token
+            for token in re.findall(r"[a-z0-9]+", previous_sentences[-1].lower())
+            if token not in STOP_WORDS
+        }
+        if not previous_terms:
+            return None
+
+        matched_index = max(
+            range(len(sentences)),
+            key=lambda index: len(
+                set(re.findall(r"[a-z0-9]+", sentences[index].lower())) & previous_terms
+            ),
+        )
+        if matched_index + 1 < len(sentences):
+            return sentences[matched_index + 1]
+        return None
 
     @staticmethod
     def _sentence_score(

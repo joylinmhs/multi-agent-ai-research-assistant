@@ -26,6 +26,24 @@ class TestSummarizationAgent(unittest.IsolatedAsyncioTestCase):
         )
         self.assertNotIn("Answer to", answer)
 
+    async def test_answers_follow_up_with_next_story_event(self):
+        story = (
+            "A little sparrow found a tiny seed on the ground. Instead of eating it, "
+            "she planted it near a sunny spot and watered it every day. Days passed, "
+            "and a small green plant began to grow. The sparrow was very happy."
+        )
+
+        answer = await SummarizationAgent().summarize(
+            [{"text": story, "distance": 0.1}],
+            "What did it do next?",
+            previous_answer=(
+                "A little sparrow found a tiny seed on the ground. Instead of eating it, "
+                "she planted it near a sunny spot and watered it every day."
+            ),
+        )
+
+        self.assertEqual(answer, "Days passed, and a small green plant began to grow.")
+
 
 class TestFactCheckingAgent(unittest.IsolatedAsyncioTestCase):
     async def test_confidence_uses_available_evidence(self):
