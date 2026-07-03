@@ -3,7 +3,7 @@ export default {
   theme: {
     extend: {
       boxShadow: {
-        panel: '0 20px 45px rgba(15, 23, 42, 0.18)',
+        panel: '0 24px 70px rgba(0, 0, 0, 0.24)',
       },
     },
   },

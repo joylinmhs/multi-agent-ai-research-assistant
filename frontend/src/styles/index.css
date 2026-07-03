@@ -13,4 +13,24 @@ html, body, #root {
 body {
   margin: 0;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(34, 211, 238, 0.08), transparent 28rem),
+    radial-gradient(circle at 85% 12%, rgba(129, 140, 248, 0.09), transparent 30rem),
+    #020617;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(103, 232, 249, 0.28);
+  color: white;
+}
+
+@layer components {
+  .field {
+    @apply block w-full rounded-2xl border border-slate-700/80 bg-slate-950/70 px-4 py-3.5 text-sm leading-6 text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-400/70 focus:ring-4 focus:ring-cyan-400/10;
+  }
+
+  .primary-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-40;
+  }
 }
