@@ -226,10 +226,10 @@ function App() {
           )}
 
           {sourceStatus ? (
-            <div className={`mt-4 rounded-xl border p-4 text-sm ${sourceStatus.kind === 'success' ? 'border-emerald-400/20 bg-emerald-400/[0.07] text-emerald-200' : 'border-rose-400/20 bg-rose-400/[0.07] text-rose-200'}`}>
+            <div role={sourceStatus.kind === 'error' ? 'alert' : 'status'} className={`mt-4 rounded-xl border p-4 text-sm ${sourceStatus.kind === 'success' ? 'border-emerald-400/20 bg-emerald-400/[0.07] text-emerald-200' : 'border-rose-400/20 bg-rose-400/[0.07] text-rose-200'}`}>
               <div className="flex items-start gap-3">
                 {sourceStatus.kind === 'success' ? <CheckCircleIcon className="mt-0.5 h-5 w-5 shrink-0" /> : null}
-                <div>
+                <div className="min-w-0">
                   <p className="font-medium">{sourceStatus.message}</p>
                   {sourceStatus.name ? <p className="mt-1 truncate text-xs opacity-70">{sourceStatus.name}</p> : null}
                 </div>
@@ -270,10 +270,10 @@ function App() {
             </div>
           </form>
 
-          {chatError ? <p className="mt-4 rounded-xl border border-rose-400/20 bg-rose-400/[0.07] p-4 text-sm text-rose-200">{chatError}</p> : null}
+          {chatError ? <p role="alert" className="mt-4 rounded-xl border border-rose-400/20 bg-rose-400/[0.07] p-4 text-sm text-rose-200">{chatError}</p> : null}
 
           {chatResult ? (
-            <article className="mt-6 rounded-2xl border border-indigo-300/15 bg-gradient-to-br from-indigo-400/[0.08] to-cyan-400/[0.04] p-5 sm:p-6">
+            <article aria-live="polite" className="mt-6 rounded-2xl border border-indigo-300/15 bg-gradient-to-br from-indigo-400/[0.08] to-cyan-400/[0.04] p-5 sm:p-6">
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-indigo-300">
                 <SparklesIcon className="h-4 w-4" /> Answer
               </div>
