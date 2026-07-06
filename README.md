@@ -27,7 +27,6 @@ The default embedding model must exist in the local Sentence Transformers cache.
 Runtime requests use cached model files so they do not depend on Hugging Face availability.
 
 ## Checks
-
 - Backend: `cd backend && python -m unittest discover -s tests -v`
 - Frontend: `cd frontend && npm run build`
 
