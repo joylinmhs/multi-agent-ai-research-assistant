@@ -31,7 +31,6 @@ Runtime requests use cached model files so they do not depend on Hugging Face av
 - Frontend: `cd frontend && npm run build`
 
 ## Current Limitations
-
 - Answer synthesis is extractive and does not currently call an LLM.
 - Confidence is a lexical evidence score, not model-based fact verification.
 - Session memory is process-local and is lost when the backend restarts.
