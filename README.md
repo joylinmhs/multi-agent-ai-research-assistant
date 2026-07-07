@@ -17,7 +17,6 @@ The architecture is as follows:
 - `docs/` – Architecture notes and deployment documentation.
 
 ## Initial Setup
-
 1. Create a Python virtual environment and install `backend/requirements.txt`.
 2. Copy `backend/.env.example` to `backend/.env` and adjust values as needed.
 3. From `backend/`, run `uvicorn app.main:app --reload`.
