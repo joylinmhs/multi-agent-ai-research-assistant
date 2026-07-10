@@ -11,7 +11,6 @@ The architecture is as follows:
 - **Agents:** Retrieval, local summarization, evidence scoring, citations, and bounded in-process session memory.
 
 ## Folder Structure
-
 - `backend/` – FastAPI application and AI orchestration.
 - `frontend/` – React + Vite application with Tailwind CSS.
 - `docs/` – Architecture notes and deployment documentation.
