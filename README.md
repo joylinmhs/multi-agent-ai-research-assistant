@@ -18,9 +18,6 @@ The architecture is as follows:
 3. From `backend/`, run `uvicorn app.main:app --reload`.
 4. From `frontend/`, run `npm install` and `npm run dev`.
 
-The default embedding model must exist in the local Sentence Transformers cache.
-Runtime requests use cached model files so they do not depend on Hugging Face availability.
-
 ## Checks
 - Backend: `cd backend && python -m unittest discover -s tests -v`
 - Frontend: `cd frontend && npm run build`
