@@ -1,6 +1,5 @@
 # Multi-Agent AI Research Assistant using RAG and LLM Agents
 A full-stack research assistant that combines a FastAPI API, Chroma database retrieval, and focused agents with a React interface.
-
 ## Project Overview
 The architecture is as follows:
 - **Frontend:** React, TypeScript, Vite, and Tailwind CSS.
