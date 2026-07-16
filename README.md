@@ -23,6 +23,7 @@ The architecture is as follows:
 4. From `frontend/`, run `npm install` and `npm run dev`.
 
 ## Checks
+
 - Backend: `cd backend && python -m unittest discover -s tests -v`
 - Frontend: `cd frontend && npm run build`
 
