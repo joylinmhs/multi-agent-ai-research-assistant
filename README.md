@@ -2,7 +2,6 @@
 A full-stack research assistant that combines a FastAPI API, Chroma database retrieval, and focused agents with a React interface.
 
 ## Project Overview
-
 The architecture is as follows:
 - **Frontend:** React, TypeScript, Vite, and Tailwind CSS.
 - **Backend:** FastAPI routes for health checks, document ingestion, uploads, and chat queries.
